@@ -19,13 +19,13 @@ Navigate to the desired topic's directory to explore its content.
 
 ## Topics Covered
 
-### Algorithms
+### Sorting
+### Data Structures
 ### Hash Functions
 ### Encryption
 ### Mathematics
-### Data Structures
 ### Intricate Algorithms
-### Sorting
+
 ## Usage
 
 To use the implementations provided in this repository, simply navigate to the corresponding directory and follow the instructions provided in the README files of each topic. Most of the code is written in Go, so you need to have Go installed on your machine.
