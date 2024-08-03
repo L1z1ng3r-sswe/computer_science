@@ -15,20 +15,11 @@
 To install the package, use:
 
 ```sh
-go get github.com/L1z1ng3r-sswe/computer_science/data_structures/circular_queue
+go get -u github.com/L1z1ng3r-sswe/computer_science/data_structures/circular_queue
 ```
 
 ## Usage
 
-### Importing the package
-
-```go
-import (
-    "fmt"
-    "time"
-    "github.com/L1z1ng3r-sswe/computer_science/data_structures/circular_queue"
-)
-```
 
 ### Example
 
