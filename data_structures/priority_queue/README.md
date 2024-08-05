@@ -2,6 +2,8 @@
 
 A generic priority queue implementation in Go, allowing you to define custom comparison logic.
 
+![Priority Queue](./assets/image1.png)
+
 ## Installation
 
 To install the package, use:

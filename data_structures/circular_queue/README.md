@@ -2,6 +2,8 @@
 
 `CircularQueue` is a Go package that provides a thread-safe implementation of a circular queue (also known as a ring buffer). This queue allows concurrent enqueue and dequeue operations with blocking when the queue is full or empty.
 
+![Circular Queue](./assets/image1.png)
+
 ## Features
 
 - Thread-safe enqueue and dequeue operations
@@ -119,22 +121,7 @@ func (cq *CircularQueue) Visualization() string
 ## Visualization
 
 When running the example, you will see output similar to the following, showing the state of the queue after each operation:
-
-```
-Enqueued: 0
-Queue state: [0, _, _, _, _, _, _, _, _, _]
-Enqueued: 1
-Queue state: [0, 1, _, _, _, _, _, _, _, _]
-Dequeued: 0
-Queue state: [_, 1, _, _, _, _, _, _, _, _]
-Enqueued: 2
-Queue state: [_, 1, 2, _, _, _, _, _, _, _]
-Dequeued: 1
-Queue state: [_, _, 2, _, _, _, _, _, _, _]
-...
-```
-
-![Queue Visualization](./assets/image1.png)
 ![Queue Visualization](./assets/image2.png)
+![Queue Visualization](./assets/image3.png)
 
 The above image shows how the state of the queue changes over time with enqueue and dequeue operations.
