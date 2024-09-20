@@ -129,5 +129,7 @@ A graph is a collection of vertices (also called nodes) connected by edges. Vert
 
 - A collection of lists or arrays where each list represents a vertex and contains all the vertices adjacent to it.
 
-![Adjacency List](./assets/adjacency_list.png)
+![Adjacency List for directed graph](./assets/adjacency_list_directed.png)
+![Adjacency List for undirected graph](./assets/adjacency_list_undirected.png)
+
 

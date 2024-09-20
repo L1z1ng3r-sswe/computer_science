@@ -1,4 +1,1 @@
-git add .
-git push origin feat/graphs
-
-git commit -m "feat: add description for: Trivial Graph, Null Graph, Connected Graph, Disconnected Graph, Cyclic Graph, Acyclic Graph, Simple Graph, Multigraph, Regular Graph, Complete Graph"
+./done
