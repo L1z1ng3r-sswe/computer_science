@@ -1,22 +1,16 @@
 # MergeSort
 
-This repository contains a Go implementation of the merge sort algorithm along with a visualization of the sorting process.
+Here is the Go implementation of the **Merge Sort** algorithm along with a visualization of the sorting process.
+
 
 ## Merge Sort Algorithm
 
 Merge sort is a classic divide-and-conquer algorithm that splits an array into halves, recursively sorts each half, and then merges the sorted halves back together.
 
-## Installation
-
-To install the package, use:
-
-```sh
-go get -u github.com/L1z1ng3r-sswe/computer_science/sorting/merge_sort
-```
 
 ## Usage
 
-Here's an example demonstrating how to use the `merge_sort` package:
+Here's an example demonstrating how to use the `merge_sort`:
 
 ```go
 package main

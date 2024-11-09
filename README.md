@@ -28,4 +28,4 @@ Navigate to the desired topic's directory to explore its content.
 
 ## Usage
 
-To use the implementations provided in this repository, simply navigate to the corresponding directory and follow the instructions provided in the README files of each topic. Most of the code is written in Go, so you need to have Go installed on your machine.
+To use the implementations provided in this repository, simply navigate to the corresponding directory and follow the instructions provided in the README files of each topic. Most of the code is written in Go and C++, so you need to have Go installed on your machine.
