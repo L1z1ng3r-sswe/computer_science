@@ -1,2 +1,2 @@
 run:
-	go run main.go
+	go run ./done/main.go

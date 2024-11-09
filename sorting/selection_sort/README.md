@@ -1,15 +1,12 @@
 # SelectionSort
 
-Here is the Go implementation of the **Selection sort** algorithm along with a step-by-step explanation of how the sorting process works.
+Here is the Go and C++ implementation of the **Selection sort** algorithm along with a step-by-step explanation of how the sorting process works.
 
 ## Selection Sort Algorithm
 
 Selection sort is a simple sorting algorithm that divides the input array into two parts: the sorted part and the unsorted part. The algorithm repeatedly selects the smallest element from the unsorted part and swaps it with the first element of the unsorted part, thereby growing the sorted portion of the array.
 
 ## Selection Sort Implementation
-
-Here's the implementation of the selection sort algorithm:
-
 ```go
 package main
 
