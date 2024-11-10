@@ -1,6 +1,6 @@
 package insertion_sort
 
-func insertion_sort(nums []int) {
+func insertionSort(nums []int) {
 	n := len(nums)
 
 	for i := 1; i < n; i++ {
