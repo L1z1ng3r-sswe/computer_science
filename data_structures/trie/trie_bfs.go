@@ -1,31 +1,31 @@
 package trie
 
 type Trie struct {
-	Val  string
-	Next map[byte]*Trie
+	IsWord bool
+	Next   map[rune]*Trie
+}
+
+func NewTrie() *Trie {
+	return &Trie{Next: make(map[rune]*Trie)}
 }
 
 func (t *Trie) Insert(word string) {
 	currTrie := t
 
-	for i := 0; i < len(word); i++ {
-		char := word[i]
-
+	for _, char := range word {
 		if _, ok := currTrie.Next[char]; !ok {
-			currTrie.Next[char] = &Trie{Next: make(map[byte]*Trie)}
+			currTrie.Next[char] = NewTrie()
 		}
-
 		currTrie = currTrie.Next[char]
 	}
 
-	currTrie.Val = word
+	currTrie.IsWord = true
 }
 
 func (t *Trie) Search(word string) bool {
 	currTrie := t
 
-	for i := 0; i < len(word); i++ {
-		char := word[i]
+	for _, char := range word {
 
 		if _, ok := currTrie.Next[char]; !ok {
 			return false
@@ -34,14 +34,13 @@ func (t *Trie) Search(word string) bool {
 		currTrie = currTrie.Next[char]
 	}
 
-	return currTrie.Val == word
+	return currTrie.IsWord
 }
 
 func (t *Trie) FindPrefix(prefix string) bool {
 	currTrie := t
 
-	for i := 0; i < len(prefix); i++ {
-		char := prefix[i]
+	for _, char := range prefix {
 
 		if _, ok := currTrie.Next[char]; !ok {
 			return false

@@ -1,31 +1,34 @@
 package trie
 
 type Trie struct {
-	Val  string
-	Next map[byte]*Trie
+	IsWord   bool
+	Children map[rune]*Trie
+}
+
+func NewTrie() *Trie {
+	return &Trie{Children: make(map[rune]*Trie)}
 }
 
 func (t *Trie) Insert(word string) {
-	var dfs func(trie *Trie, word string, idx int)
-	dfs = func(trie *Trie, word string, idx int) {
-		if idx == len(word) {
-			trie.Val = word
+	wordRunes := []rune(word)
+	n := len(wordRunes)
+
+	var dfs func(node *Trie, idx int)
+	dfs = func(node *Trie, idx int) {
+		if idx == n {
+			node.IsWord = true
 			return
 		}
 
-		if trie.Next == nil {
-			trie.Next = make(map[byte]*Trie)
+		char := wordRunes[idx]
+		if _, ok := node.Children[char]; !ok {
+			node.Children[char] = NewTrie()
 		}
 
-		char := word[idx]
-
-		if _, ok := trie.Next[char]; !ok {
-			trie.Next[char] = &Trie{Next: make(map[byte]*Trie)}
-		}
-		dfs(trie.Next[char], word, idx+1)
+		dfs(node.Children[char], idx+1)
 	}
 
-	dfs(t, word, 0)
+	dfs(t, 0)
 }
 
 func (t *Trie) Search(word string) bool {
@@ -36,11 +39,11 @@ func (t *Trie) Search(word string) bool {
 		}
 
 		char := word[idx]
-		if _, ok := trie.Next[char]; !ok {
+		if _, ok := trie.Children[char]; !ok {
 			return false
 		}
 
-		return dfs(trie.Next[char], idx+1)
+		return dfs(trie.Children[char], idx+1)
 	}
 
 	return dfs(t, 0)
@@ -54,11 +57,11 @@ func (t *Trie) FindPrefix(prefix string) bool {
 		}
 
 		char := prefix[idx]
-		if _, ok := trie.Next[char]; !ok {
+		if _, ok := trie.Children[char]; !ok {
 			return false
 		}
 
-		return dfs(trie.Next[char], idx+1)
+		return dfs(trie.Children[char], idx+1)
 	}
 
 	return dfs(t, 0)
