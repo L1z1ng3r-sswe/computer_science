@@ -1,35 +1,48 @@
 package merge_sort
 
-func MergeSort(nums []int) []int {
-	if len(nums) <= 1 {
-		return nums
-	}
+func mergeSort(nums []int) {
+	n := len(nums)
+	temp := make([]int, n)
 
-	mid := len(nums) / 2
+	for width := 1; width < n; width *= 2 {
+		for i := 0; i < n; i += 2 * width {
+			start := i
+			mid := min(i+width, n)
+			end := min(i+width*2, n)
 
-	sortedRightSide := MergeSort(nums[:mid])
-	sortedLeftSide := MergeSort(nums[mid:])
-
-	// order is not matter
-	return merge(sortedRightSide, sortedLeftSide)
-}
-
-func merge(nums1, nums2 []int) []int {
-	var sorted []int
-	i, j := 0, 0
-
-	for i < len(nums1) && j < len(nums2) {
-		if nums1[i] < nums2[j] {
-			sorted = append(sorted, nums1[i])
-			i++
-		} else {
-			sorted = append(sorted, nums2[j])
-			j++
+			merge(nums, temp, start, mid, end)
 		}
 	}
+}
 
-	// order is not matter, because each of them are already sorted and one of them is empty
-	sorted = append(sorted, nums1[i:]...)
-	sorted = append(sorted, nums2[j:]...)
-	return sorted
+func merge(nums []int, temp []int, start, mid, end int) { // end is exclusive
+	k, i, j := start, start, mid
+
+	for i < mid && j < end {
+		if nums[i] > nums[j] {
+			temp[k] = nums[j]
+			j++
+		} else {
+			temp[k] = nums[i]
+			i++
+		}
+
+		k++
+	}
+
+	for i < mid {
+		temp[k] = nums[i]
+		k++
+		i++
+	}
+
+	for j < end {
+		temp[k] = nums[j]
+		k++
+		j++
+	}
+
+	for i := start; i < end; i++ {
+		nums[i] = temp[i]
+	}
 }
