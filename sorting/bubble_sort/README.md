@@ -43,3 +43,8 @@ void bubbleSort(std::vector<int>& nums) {
 ## Visualization
 
 [![Bubble Sort Visualization](https://img.youtube.com/vi/0BkoXZBbhfU/0.jpg)](https://www.youtube.com/watch?v=0BkoXZBbhfU&ab_channel=GBhat)
+
+## Files
+
+- **C++ Implementation**: `bubble_sort.cpp`
+- **Go Implementation**: `bubble_sort.go`

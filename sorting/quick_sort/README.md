@@ -61,3 +61,8 @@ Quick Sort works by partitioning the array around a "pivot" element and recursiv
 To see Quick Sort in action, watch this video for a step-by-step visual explanation:
 
 [![Quick Sort Visualization](https://img.youtube.com/vi/Hoixgm4-P4M/0.jpg)](https://www.youtube.com/watch?v=Hoixgm4-P4M)
+
+## Files
+
+- **C++ Implementation**: `quick_sort.cpp`
+- **Go Implementation**: `quick_sort.go`

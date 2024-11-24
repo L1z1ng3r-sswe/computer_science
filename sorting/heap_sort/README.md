@@ -11,3 +11,8 @@ Heap sort is a comparison-based sorting algorithm that builds a binary heap from
 For a visual explanation of heap sort, check out this video: [Heap Sort Visualization](https://www.youtube.com/watch?v=mgUiY8CVDhU&ab_channel=AbhilasBiswas)
 
 The video demonstrates the heap sort process, showing how elements are organized into a heap structure and sorted by repeatedly extracting the maximum (or minimum) element.
+
+## Files
+
+- **C++ Implementation**: `heap_sort.cpp`
+- **Go Implementation**: `heap_sort.go`

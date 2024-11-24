@@ -24,3 +24,7 @@ Merge sort is a classic divide-and-conquer algorithm that splits an array into h
 
 The image above shows the binary tree visualization of the merge sort process. It illustrates how the array is split into smaller arrays and then merged back together in sorted order.
 
+## Files
+
+- **C++ Implementation**: `merge_sort.cpp`
+- **Go Implementation**: `merge_sort.go`
