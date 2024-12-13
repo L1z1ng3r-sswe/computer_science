@@ -37,7 +37,6 @@ std::unordered_map<int, int> dijkstra(std::vector<std::vector<int>> edges, int n
   for (int i = 0; i < n; i++) {
     dist[i] = INT_MAX;
   }
-  dist[source] = 0;
 
   std::priority_queue<Node, std::vector<Node>, std::greater<Node>> minHeap;
   minHeap.push(Node{source, 0});
@@ -49,12 +48,12 @@ std::unordered_map<int, int> dijkstra(std::vector<std::vector<int>> edges, int n
     int currNode = curr.node;
     int currDist = curr.dist;
 
-    if (currDist <= dist[currNode]) {
+    if (currDist < dist[currNode]) {
+      dist[currNode] = currDist
       for (const Edge& neighbor : graph[currNode]) {
         int newDist = currDist + neighbor.Weight;
 
         if (newDist < dist[neighbor.To]) {
-          dist[neighbor.To] = newDist;
           minHeap.push(Node{neighbor.To, newDist});
         }
       }
