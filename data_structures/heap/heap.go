@@ -8,7 +8,7 @@ type Interface interface {
 	Pop() interface{}
 }
 
-func smallestt(h Interface) {
+func smallest(h Interface) {
 	for i := h.Len()/2 - 1; i >= 0; i-- {
 		down(h, i)
 	}
