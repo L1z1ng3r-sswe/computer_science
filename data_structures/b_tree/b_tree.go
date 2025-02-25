@@ -8,8 +8,8 @@ type BTree struct { // BTree serves as a "dummy" node in case of full root node
 }
 
 type BTreeNode struct {
-	Nodes    []int
-	Children []*BTreeNode
+	Nodes    []int        // max = t * 2
+	Children []*BTreeNode // max = t * 2 + 1
 }
 
 func NewBTree(t int) *BTree { // t must be more than 1
