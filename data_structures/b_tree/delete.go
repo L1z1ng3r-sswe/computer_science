@@ -17,22 +17,14 @@ func (n *BTreeNode) delete(key int, t int) {
 		if len(n.Children) == 0 { // Leaf node
 			n.Nodes = append(n.Nodes[t:], n.Nodes[t+1:]...)
 		} else {
-			if len(n.Children[i].Nodes) >= t { // Left got enough
+			if len(n.Children[i].Nodes) > t { // Left got enough
 				leftGreatest := n.Children[i].largest()
 				n.Nodes[i] = leftGreatest
 				n.Children[i].delete(leftGreatest, t)
-
-				if len(n.Children[i].Nodes) < t {
-					n.fillNode(i, t)
-				}
-			} else if len(n.Children[i+1].Nodes) >= t { // Right got enough
+			} else if len(n.Children[i+1].Nodes) > t { // Right got enough
 				rightSmallest := n.Children[i+1].smallest()
 				n.Nodes[i] = rightSmallest
 				n.Children[i+1].delete(rightSmallest, t)
-
-				if len(n.Children[i+1].Nodes) < t {
-					n.fillNode(i+1, t)
-				}
 			} else { // both have not enough -> merge them
 				n.mergeNodes(i)
 				n.Children[i].delete(i, t)
@@ -47,7 +39,7 @@ func (n *BTreeNode) delete(key int, t int) {
 	}
 
 	n.Children[i].delete(key, t)
-	
+
 	if len(n.Children[i].Nodes) < t {
 		n.fillNode(i, t)
 	}
@@ -88,29 +80,27 @@ func (n *BTreeNode) mergeNodes(i int) {
 }
 
 func (n *BTreeNode) fillNode(i int, t int) {
-	underFlowChild := n.Children[i]
-
 	if i > 0 && len(n.Children[i-1].Nodes) > t { // left sibling got enough, borrow
-		borrowFromLeft()
-	} else if i < len(n.Children)-1 && len(n.Children[i+2].Nodes) > t { // right sibling got enough, borrow
-		borrowFromRight()
+		n.borrowFromLeft(i)
+	} else if i < len(n.Children)-1 && len(n.Children[i+1].Nodes) > t { // right sibling got enough, borrow
+		n.borrowFromRight(i)
 	} else { // both sibling are under flow -> merge
-		if  {
-			n.merge()
+		if i > 0 {
+			n.mergeNodes(i - 1)
 		} else {
-			n.merge()
+			n.mergeNodes(i)
 		}
 	}
 }
 
 func (n *BTreeNode) borrowFromLeft(i int) {
 	left, underFlow := n.Children[i-1], n.Children[i]
-	
+
 	underFlow.Nodes = underFlow.Nodes[:len(underFlow.Nodes)+1]
 	copy(underFlow.Nodes[1:], underFlow.Nodes[0:])
-	underFlow.Nodes[0] = n.Nodes[i]
+	underFlow.Nodes[0] = n.Nodes[i-1]
 
-	n.Nodes[i] = left.Nodes[len(left.Nodes)-1]
+	n.Nodes[i-1] = left.Nodes[len(left.Nodes)-1]
 	left.Nodes = left.Nodes[:len(left.Nodes)-1]
 
 	if len(left.Children) > 0 {
