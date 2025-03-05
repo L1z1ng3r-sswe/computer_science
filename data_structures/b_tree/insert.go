@@ -1,39 +1,39 @@
 package b_tree
 
 func (t *BTree) Insert(key int) {
-	if len(t.Root.Nodes) == 2*t.T {
-		newRoot := newNode(t.T)
+	if len(t.Root.Keys) == 2*t.T+1 {
+		newRoot := newBTreeNode(t.T)
 		newRoot.Children = append(newRoot.Children, t.Root)
+		newRoot.split(0, t.T)
 
-		newRoot.splitChild(0, t.T)
 		t.Root = newRoot
 	}
 
-	t.Root.insert(key, t.T)
+	t.Root.insert(key, t.T-1)
 }
 
 func (n *BTreeNode) insert(key int, t int) {
-	i := len(n.Nodes) - 1
+	i := len(n.Keys) - 1
 
 	if n.isLeaf() {
-		n.Nodes = n.Nodes[:len(n.Nodes)+1] // Expand
+		n.Keys = n.Keys[:len(n.Keys)+1]
 
-		for i >= 0 && n.Nodes[i] > key {
-			n.Nodes[i+1] = n.Nodes[i]
+		for i >= 0 && key < n.Keys[i] {
+			n.Keys[i+1] = n.Keys[i]
 			i--
 		}
 
-		n.Nodes[i+1] = key
+		n.Keys[i+1] = key
 	} else {
-		for i >= 0 && n.Nodes[i] > key {
+		for i >= 0 && key < n.Keys[i] {
 			i--
 		}
+
 		i++
 
-		if len(n.Children[i].Nodes) == 2*t { // Child is full
-			n.splitChild(i, t)
-
-			if key > n.Nodes[i] {
+		if len(n.Children[i].Keys) == 2*t+1 {
+			n.split(i, t)
+			if key > n.Keys[i] {
 				i++
 			}
 		}
@@ -41,23 +41,28 @@ func (n *BTreeNode) insert(key int, t int) {
 		n.Children[i].insert(key, t)
 	}
 }
-func (n *BTreeNode) splitChild(i int, t int) { // i - child in children that is full
-	fullNode := n.Children[i]
 
-	newNode := newNode(t)
-	newNode.Nodes = append(newNode.Nodes, fullNode.Nodes[t+1:]...)
-	fullNode.Nodes = fullNode.Nodes[:t]
+func (n *BTreeNode) split(i int, t int) {
+	fullChild := n.Children[i]
 
-	if !fullNode.isLeaf() {
-		newNode.Children = append(newNode.Children, fullNode.Children[t+1:]...)
-		fullNode.Children = fullNode.Children[:t+1]
+	n.Keys = n.Keys[:len(n.Keys)+1]
+	if i+1 < len(n.Keys) { // not a last element
+		copy(n.Keys[i+1:], n.Keys[i:])
+	}
+	n.Keys[i] = fullChild.Keys[t]
+
+	newNode := newBTreeNode(t)
+	newNode.Keys = fullChild.Keys[t+1:]
+	fullChild.Keys = fullChild.Keys[:t]
+
+	if !fullChild.isLeaf() {
+		newNode.Children = fullChild.Children[t:]
+		fullChild.Children = fullChild.Children[:t]
 	}
 
-	n.Nodes = n.Nodes[:len(n.Nodes)+1] // Expand slice
-	copy(n.Nodes[i+1:], n.Nodes[i:])
-	n.Nodes[i] = fullNode.Nodes[t]
-
 	n.Children = n.Children[:len(n.Children)+1]
-	copy(n.Children[i+2:], n.Children[i+1:])
+	if i+2 < len(n.Children) { // not a last element
+		copy(n.Children[i+2:], n.Children[i+1:])
+	}
 	n.Children[i+1] = newNode
 }
