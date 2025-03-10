@@ -1,66 +1,87 @@
-func dijkstraDirected(times [][]int, n int, k int) map[int]int {
-	graph := combineGraph(times)
+package dijkstra
 
-	dist := make(map[int]int, n)
-	for i := range n {
-		dist[i+1] = math.MaxInt64
+import (
+	"container/heap"
+	"math"
+)
+
+func dijkstra(edges [][]int, n int, k int) int {
+	graph := buildGraph(n, edges)
+
+	distances := make([]int, n)
+	for i := range distances {
+		distances[i] = math.MaxInt64
 	}
+	distances[k-1] = 0
 
-	minHeap := &MinHeap{Item{k, 0}}
+	minHeap := &MinHeap{&Item{k, 0}}
 
 	for minHeap.Len() > 0 {
-		item := heap.Pop(minHeap).(Item)
+		item := heap.Pop(minHeap).(*Item)
 
-		if item.Cost < dist[item.Node] {
-			dist[item.Node] = item.Cost
+		for _, edge := range graph[item.vertex-1] {
+			newCost := item.distance + edge.weight
 
-			for _, neighbor := range graph[item.Node] {
-				newCost := neighbor.Weight + item.Cost
-
-				if newCost < dist[neighbor.To] {
-					heap.Push(minHeap, Item{neighbor.To, newCost})
-				}
+			if newCost < distances[edge.target-1] {
+				distances[edge.target-1] = newCost
+				heap.Push(minHeap, &Item{edge.target, newCost})
 			}
 		}
 	}
 
-	return dist
+	res := -1
+	for _, dist := range distances {
+		if dist == math.MaxInt64 {
+			return -1
+		}
+		if dist > res {
+			res = dist
+		}
+	}
+
+	return res
 }
 
-type Edge struct {
-	To     int
-	Weight int
-}
-
-func combineGraph(edges [][]int) map[int][]Edge {
-	graph := make(map[int][]Edge, len(edges)+1)
+func buildGraph(n int, edges [][]int) [][]*Edge {
+	graph := make([][]*Edge, n)
 
 	for _, edge := range edges {
-		from, to, weight := edge[0], edge[1], edge[2]
-		graph[from] = append(graph[from], Edge{to, weight})
+		source, target, weight := edge[0], edge[1], edge[2]
+		graph[source-1] = append(graph[source-1], &Edge{target, weight})
 	}
 
 	return graph
 }
 
-type Item struct {
-	Node int
-	Cost int
+type Edge struct {
+	target, weight int
 }
 
-type MinHeap []Item
+type MinHeap []*Item
 
-func (h MinHeap) Len() int           { return len(h) }
-func (h MinHeap) Less(i, j int) bool { return h[i].Cost < h[j].Cost }
-func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+type Item struct {
+	vertex, distance int
+}
 
-func (h *MinHeap) Push(x interface{}) {
-	*h = append(*h, x.(Item))
+func (h MinHeap) Len() int {
+	return len(h)
+}
+
+func (h MinHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h MinHeap) Less(i, j int) bool {
+	return h[i].distance < h[j].distance
+}
+
+func (h *MinHeap) Push(i interface{}) {
+	*h = append(*h, i.(*Item))
 }
 
 func (h *MinHeap) Pop() interface{} {
 	old := *h
-	item := old[len(old)-1]
+	val := old[len(old)-1]
 	*h = old[:len(old)-1]
-	return item
+	return val
 }
