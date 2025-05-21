@@ -39,7 +39,7 @@ if writeBarrier.enabled {
 
 ---
 
-## ⏸ Stop-The-World (STW)
+## Stop-The-World (STW)
 
 Перед началом работы GC происходит короткая фаза `STW`, при которой **все горутины останавливаются**, чтобы:
 
