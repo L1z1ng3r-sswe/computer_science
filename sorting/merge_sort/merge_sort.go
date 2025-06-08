@@ -46,3 +46,36 @@ func merge(nums []int, temp []int, start, mid, end int) { // end is exclusive
 		nums[i] = temp[i]
 	}
 }
+
+func mergeSort(nums []int) []int {
+	if len(nums) <= 1 {
+		return nums
+	}
+
+	mid := len(nums) / 2
+	first := mergeSort(nums[:mid])
+	second := mergeSort(nums[mid:])
+
+	return merge(first, second)
+}
+
+// merge function receives 2 arrays and merge them into a single one
+func merge(arr1, arr2 []int) []int {
+	res := make([]int, 0, len(arr1)+len(arr2))
+	i, j := 0, 0
+
+	for i < len(arr1) && j < len(arr2) {
+		if arr1[i] < arr2[j] {
+			res = append(res, arr1[i])
+			i++
+		} else {
+			res = append(res, arr2[j])
+			j++
+		}
+	}
+
+	res = append(res, arr1[i:]...)
+	res = append(res, arr2[j:]...)
+
+	return res
+}
