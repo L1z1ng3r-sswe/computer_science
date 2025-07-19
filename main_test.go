@@ -1,49 +1,64 @@
 package main
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
-func FindTarget(nums []int, target int) bool {
-	for _, num := range nums {
-		if num == target {
-			return true
-		}
-	}
+const ops = 1000
 
-	return false
-}
+// ---------------- Mutex ----------------
 
-func BinaryFindTarget(nums []int, target int) bool {
-	left, right := 0, len(nums)-1
+func BenchmarkMutex(b *testing.B) {
+	var mu sync.Mutex
+	data := make(map[int]int)
 
-	for left <= right {
-		mid := left + (right-left)/2
-
-		if nums[mid] < target {
-			left = mid + 1
-		} else if nums[mid] > target {
-			right = mid - 1
-		} else {
-			return true
-		}
-	}
-
-	return false
-}
-
-func BenchmarkFindTarget(b *testing.B) {
-	nums := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
-	target := 19
-
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		FindTarget(nums, target)
+		wg := sync.WaitGroup{}
+		for j := 0; j < ops; j++ {
+			wg.Add(1)
+			go func(k int) {
+				defer wg.Done()
+				if k%2 == 0 {
+					mu.Lock()
+					data[k] = k
+					mu.Unlock()
+				} else {
+					mu.Lock()
+					_ = data[k]
+					mu.Unlock()
+				}
+			}(j)
+		}
+		wg.Wait()
 	}
 }
 
-func BenchmarkBinaryFindTarget(b *testing.B) {
-	nums := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
-	target := 19
+// ---------------- RWMutex ----------------
 
+func BenchmarkRWMutex(b *testing.B) {
+	var mu sync.RWMutex
+	data := make(map[int]int)
+
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		BinaryFindTarget(nums, target)
+		wg := sync.WaitGroup{}
+		for j := 0; j < ops; j++ {
+			wg.Add(1)
+			go func(k int) {
+				defer wg.Done()
+				if k%2 == 0 {
+					mu.Lock()
+					data[k] = k
+					mu.Unlock()
+				} else {
+					mu.RLock()
+					_ = data[k]
+					mu.RUnlock()
+				}
+			}(j)
+		}
+		wg.Wait()
 	}
 }
