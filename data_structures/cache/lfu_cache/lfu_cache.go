@@ -23,41 +23,46 @@ func (c *LFUCache) Get(key int) int {
 	return -1
 }
 
+func (c *LFUCache) Put(key int, value int) {
+	if node, ok := c.Elements[key]; ok { // update
+		node.Value = value
+		c.updateFreq(node, node.Freq, node.Freq+1)
+	} else { // create
+		node = NewNode(value)
+		lru := c.FreqMap[1]
+		lru.insert(node)
+	}
+}
+
 // Moves node to new freqMap level
 // after removing node we need to verify
 // that the old lru is not empty.
 // if it is so - delete it from FreqMap
 func (c *LFUCache) updateFreq(node *Node, oldFreq, newFreq int) {
 	node.Freq = newFreq
-
 	node.removeNode()
+
 	if c.FreqMap[oldFreq].isEmpty() {
 		delete(c.FreqMap, oldFreq)
 	}
 
-	lru := c.getOrCreateLRU(newFreq)
+	lru := c.getOrCreateFreqLRU(newFreq)
 	lru.insert(node)
 }
 
 // Inserts new lru in FreqMap if not created yet, or return if created
-func (c *LFUCache) getOrCreateLRU(freq int) *LRUCache {
-	lru, ok := c.FreqMap[freq]
-	if !ok { // lru not created yet
-		lru = NewLRUCache()
-		c.FreqMap[freq] = lru
-		return lru
+func (c *LFUCache) getOrCreateFreqLRU(freq int) *LRUCache {
+	lru := c.FreqMap[freq]
+	if lru == nil {
+		return c.newFreqLRU(freq)
 	}
 
 	return lru
 }
 
-// // create
-// 	push:
-// 		accept key and value
-// 		generate and insert Node into elems
-// 		insert node into lru:
-// 			check if lru of freq present and then insert
-// 	put:
-// func (c *LFUCache) Put(key int, value int) {
-
-// }
+// Inserts new freq and returns lru of this freq
+func (c *LFUCache) newFreqLRU(freq int) *LRUCache {
+	lru := NewLRUCache()
+	c.FreqMap[freq] = lru
+	return lru
+}
