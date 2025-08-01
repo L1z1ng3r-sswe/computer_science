@@ -2,21 +2,23 @@ package lfu_cache
 
 type LFUCache struct {
 	Capacity int
-	Elements map[int]*Node
-	FreqMap  map[int]*LRUCache
+	MinFreq  int
+	Nodes    map[int]*Node
+	FreqMap  map[int]*LRUCache // key is frequency
 }
 
 func Constructor(capacity int) LFUCache {
 	return LFUCache{
 		Capacity: capacity,
-		Elements: make(map[int]*Node, capacity),
-		FreqMap:  map[int]*LRUCache{1: NewLRUCache()},
+		MinFreq:  1,
+		Nodes:    make(map[int]*Node),
+		FreqMap:  make(map[int]*LRUCache),
 	}
 }
 
 func (c *LFUCache) Get(key int) int {
-	if node, ok := c.Elements[key]; ok {
-		c.updateFreq(node, node.Freq, node.Freq+1)
+	if node, ok := c.Nodes[key]; ok {
+		c.increaseFreq(node)
 		return node.Value
 	}
 
@@ -24,45 +26,54 @@ func (c *LFUCache) Get(key int) int {
 }
 
 func (c *LFUCache) Put(key int, value int) {
-	if node, ok := c.Elements[key]; ok { // update
+	if node, ok := c.Nodes[key]; ok { // update
 		node.Value = value
-		c.updateFreq(node, node.Freq, node.Freq+1)
-	} else { // create
-		node = NewNode(value)
-		lru := c.FreqMap[1]
-		lru.insert(node)
+		c.increaseFreq(node)
+	} else { // push
+		if len(c.Nodes) == c.Capacity { // reach limit
+			victimLRU := c.FreqMap[c.MinFreq]
+			victimNode := victimLRU.popLRU()
+			delete(c.Nodes, victimNode.Key)
+
+			if victimLRU.isEmpty() {
+				delete(c.FreqMap, c.MinFreq)
+
+				if victimLRU.isEmpty() {
+					delete(c.FreqMap, c.MinFreq)
+				}
+			}
+		}
+
+		c.MinFreq = 1
+		newNode := NewNode(key, value)
+
+		c.Nodes[key] = newNode
+		c.ensureLRU(c.MinFreq).addToFront(newNode)
 	}
 }
 
-// Moves node to new freqMap level
-// after removing node we need to verify
-// that the old lru is not empty.
-// if it is so - delete it from FreqMap
-func (c *LFUCache) updateFreq(node *Node, oldFreq, newFreq int) {
+func (c *LFUCache) increaseFreq(node *Node) {
+	oldFreq, newFreq := node.Freq, node.Freq+1
 	node.Freq = newFreq
-	node.removeNode()
 
+	// remove from old lru
+	node.remove()
 	if c.FreqMap[oldFreq].isEmpty() {
 		delete(c.FreqMap, oldFreq)
+		if oldFreq == c.MinFreq {
+			c.MinFreq = newFreq
+		}
 	}
 
-	lru := c.getOrCreateFreqLRU(newFreq)
-	lru.insert(node)
+	// insert to new lru
+	c.ensureLRU(newFreq).addToFront(node)
 }
 
-// Inserts new lru in FreqMap if not created yet, or return if created
-func (c *LFUCache) getOrCreateFreqLRU(freq int) *LRUCache {
-	lru := c.FreqMap[freq]
-	if lru == nil {
-		return c.newFreqLRU(freq)
+func (c *LFUCache) ensureLRU(freq int) *LRUCache {
+	cache := c.FreqMap[freq]
+	if cache == nil {
+		cache = NewLRUCache()
+		c.FreqMap[freq] = cache
 	}
-
-	return lru
-}
-
-// Inserts new freq and returns lru of this freq
-func (c *LFUCache) newFreqLRU(freq int) *LRUCache {
-	lru := NewLRUCache()
-	c.FreqMap[freq] = lru
-	return lru
+	return cache
 }

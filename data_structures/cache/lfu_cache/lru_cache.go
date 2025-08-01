@@ -5,9 +5,9 @@ type LRUCache struct {
 }
 
 func NewLRUCache() *LRUCache {
-	head, tail := NewNode(0), NewNode(0)
-	tail.Prev = head
+	head, tail := NewNode(0, 0), NewNode(0, 0)
 	head.Next = tail
+	tail.Prev = head
 
 	return &LRUCache{
 		Head: head,
@@ -15,16 +15,23 @@ func NewLRUCache() *LRUCache {
 	}
 }
 
+// check if lru is empty
 func (c *LRUCache) isEmpty() bool {
-	if c.Head.Next == c.Tail {
-		return true
-	}
-	return false
+	return c.Head.Next == c.Tail
 }
 
-func (c *LRUCache) insert(node *Node) {
+func (c *LRUCache) addToFront(node *Node) {
 	node.Next = c.Head.Next
 	node.Prev = c.Head
 	c.Head.Next.Prev = node
 	c.Head.Next = node
+}
+
+// works only when lru not empty, check is empty before
+func (c *LRUCache) popLRU() *Node {
+	lruNode := c.Tail.Prev
+
+	lruNode.remove()
+
+	return lruNode
 }

@@ -1,22 +1,23 @@
 package lfu_cache
 
 type Node struct {
-	Value      int
-	Freq       int
-	Next, Prev *Node
+	Key   int
+	Value int
+	Next  *Node
+	Prev  *Node
+	Freq  int
 }
 
-// default value of freq is 1, next and prev are nil
-func NewNode(value int) *Node {
+// default freq is 1
+func NewNode(key int, value int) *Node {
 	return &Node{
+		Key:   key,
 		Value: value,
 		Freq:  1,
-		Next:  nil,
-		Prev:  nil,
 	}
 }
 
-func (n *Node) removeNode() {
-	n.Prev.Next = n.Next
-	n.Next.Prev = n.Prev
+func (node *Node) remove() {
+	node.Next.Prev = node.Prev
+	node.Prev.Next = node.Next
 }
